@@ -1,36 +1,52 @@
 'use strict';
 
 import * as vscode from 'vscode';
+import * as path from 'path';
+
 
 export function activate(context: vscode.ExtensionContext) {
 	let terminalStack: vscode.Terminal[] = [];
+	let config = vscode.workspace.getConfiguration('ruff');
+	let that = this;
+	this.settings = {
+      rootDirectory: config.get('rootDirectory'),
+	  defaultProjectName: config.get('defaultProjectName')
+    };
 
 	context.subscriptions.push(vscode.commands.registerCommand('ruff.rapInit', () => {
-		let folderPath = vscode.workspace.rootPath;
-		let question = `What's the path and name of the new file?`;
+
+		let projectPath = vscode.workspace.rootPath || path.dirname(vscode.window.activeTextEditor.document.fileName) || that.settings.rootDirectory;
+		let question = `What's the path of the project?`;
 
 		vscode.window.showInputBox({
 			prompt: question,
-			value: folderPath
+			value: projectPath
 		}).then(selectedFilePath => {
-			console.log(selectedFilePath);
 
-			
 			if (selectedFilePath === null || typeof selectedFilePath === 'undefined') {
 				return;
 			}
 			
 			if (selectedFilePath) {
-				// if (this.settings.showFullPath) {
-				// 	console.log(this.settings.showFullPath);
-				// } else {
-				// 	console.log(selectedFilePath);
-				// }
-				console.log(selectedFilePath);
+				terminalStack.push(vscode.window.createTerminal(`Ext Terminal #${terminalStack.length + 1}`));
+				let question = `What's the name of the project?`;
+				let thePath = selectedFilePath; 
+				vscode.window.showInputBox({
+					prompt: question,
+					value: that.settings.defaultProjectName
+				}).then(projectName => {
+					getLatestTerminal().sendText(`mkdir ${thePath}`, true);
+					getLatestTerminal().sendText(`cd ${thePath}`, true);
+					getLatestTerminal().sendText(`rap init`, true);
+					getLatestTerminal().sendText(`${projectName}`, true);
+					getLatestTerminal().sendText(``, true);
+					getLatestTerminal().sendText(``, true);
+					getLatestTerminal().sendText(``, true);
+				})	
 			}
+
 		});
 
-		terminalStack.push(vscode.window.createTerminal(`Ext Terminal #${terminalStack.length + 1}`));
 	}));
 
 	context.subscriptions.push(vscode.commands.registerCommand('terminalTest.createTerminal', () => {

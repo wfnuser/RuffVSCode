@@ -20,6 +20,22 @@
 	],
 	"main": "./out/src/extension",
 	"contributes": {
+		"configuration": {
+            "title": "Ruff Extension Configuration",
+            "type": "object",
+            "properties": {
+                "ruff.rootDirectory": {
+                    "type": "string",
+                    "default": "~",
+                    "description": "root directory"
+                },
+				"ruff.defaultProjectName": {
+                    "type": "string",
+                    "default": "NewRuffProject",
+                    "description": "projectname"
+                }
+            }
+        },
 		"commands": [
 			{
 				"command": "terminalTest.createTerminal",
