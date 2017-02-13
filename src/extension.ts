@@ -2,9 +2,12 @@
 
 import * as vscode from 'vscode';
 import * as path from 'path';
-
+import * as Q from 'q';
+import * as fs from 'fs';
+import * as child_process from 'child_process'; 
 
 export function activate(context: vscode.ExtensionContext) {
+	
 	let terminalStack: vscode.Terminal[] = [];
 	let config = vscode.workspace.getConfiguration('ruff');
 	let that = this;
@@ -35,20 +38,16 @@ export function activate(context: vscode.ExtensionContext) {
 					prompt: question,
 					value: that.settings.defaultProjectName
 				}).then(projectName => {
-					getLatestTerminal().show();
-					getLatestTerminal().sendText(`mkdir ${thePath}`, true);
-					getLatestTerminal().sendText(`cd ${thePath}`, true);
-					getLatestTerminal().sendText(`rap init`, true);
-					getLatestTerminal().sendText(`${projectName}`, true);
-					getLatestTerminal().sendText(``, true);
-					getLatestTerminal().sendText(``, true);
-					getLatestTerminal().sendText(``, true);
-					getLatestTerminal().sendText(``, true);
-					getLatestTerminal().sendText(``, true);
-					getLatestTerminal().sendText(``, true);
-					console.log(thePath+'/'+projectName);
-					let uri = vscode.Uri.parse(thePath+'/'+projectName);
-					let success = vscode.commands.executeCommand('vscode.openFolder', uri);
+					if(typeof projectName === 'undefined') {
+						return;
+					}
+					child_process.exec("mkdir -p "+thePath+"/"+projectName, function(error,stdout,stderr){
+						console.log(error);
+						child_process.exec("cd "+thePath+"/"+projectName+"&& rap init -y", function(error,stdout,stderr){
+							let uri = vscode.Uri.parse(thePath+'/'+projectName);
+							let success = vscode.commands.executeCommand('vscode.openFolder', uri);
+						});
+					})
 				})	
 			}
 
@@ -58,6 +57,8 @@ export function activate(context: vscode.ExtensionContext) {
 
 	context.subscriptions.push(vscode.commands.registerCommand('terminalTest.createTerminal', () => {
 		terminalStack.push(vscode.window.createTerminal(`Ext Terminal #${terminalStack.length + 1}`));
+		// fs_readFile('./myfile.txt').then(console.log, console.error);
+		console.log("create");
 	}));
 	context.subscriptions.push(vscode.commands.registerCommand('terminalTest.hide', () => {
 		if (terminalStack.length === 0) {
