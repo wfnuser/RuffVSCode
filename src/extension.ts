@@ -35,6 +35,7 @@ export function activate(context: vscode.ExtensionContext) {
 					prompt: question,
 					value: that.settings.defaultProjectName
 				}).then(projectName => {
+					getLatestTerminal().show();
 					getLatestTerminal().sendText(`mkdir ${thePath}`, true);
 					getLatestTerminal().sendText(`cd ${thePath}`, true);
 					getLatestTerminal().sendText(`rap init`, true);
@@ -42,6 +43,12 @@ export function activate(context: vscode.ExtensionContext) {
 					getLatestTerminal().sendText(``, true);
 					getLatestTerminal().sendText(``, true);
 					getLatestTerminal().sendText(``, true);
+					getLatestTerminal().sendText(``, true);
+					getLatestTerminal().sendText(``, true);
+					getLatestTerminal().sendText(``, true);
+					console.log(thePath+'/'+projectName);
+					let uri = vscode.Uri.parse(thePath+'/'+projectName);
+					let success = vscode.commands.executeCommand('vscode.openFolder', uri);
 				})	
 			}
 
