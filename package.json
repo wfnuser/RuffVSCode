@@ -15,7 +15,8 @@
 		"onCommand:terminalTest.createAndSend",
 		"onCommand:terminalTest.createZshLoginShell",
 		"onCommand:terminalTest.rapLog",
-		"onCommand:terminalTest.rapDeploy"
+		"onCommand:terminalTest.rapDeploy",
+		"onCommand:ruff.rapInit"
 	],
 	"main": "./out/src/extension",
 	"contributes": {
@@ -67,8 +68,32 @@
 			{
 				"command": "terminalTest.rapLog",
 				"title": "Ruff API: Get Ruff Log"
-			}
-		]
+			},
+			{
+                "command": "ruff.rapInit",
+                "title": "Ruff API: Initialize a project",
+				"icon": {
+					"light": "../img/run.svg",
+					"dark": "../img/run.svg"
+				}
+            }
+		],
+		"keybindings": [
+            {
+                "command": "ruff.rapInit",
+                "key": "alt+ctrl+n",
+                "mac": "alt+cmd+`"
+            }
+        ],
+        "menus": {
+            "editor/title": [
+                {
+					"when": "resourceLangId == markdown",
+                    "command": "ruff.rapInit",
+					"group": "navigation"
+                }
+            ]
+        }
 	},
 	"scripts": {
 		"vscode:prepublish": "tsc -p ./",

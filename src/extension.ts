@@ -5,6 +5,34 @@ import * as vscode from 'vscode';
 export function activate(context: vscode.ExtensionContext) {
 	let terminalStack: vscode.Terminal[] = [];
 
+	context.subscriptions.push(vscode.commands.registerCommand('ruff.rapInit', () => {
+		let folderPath = vscode.workspace.rootPath;
+		let question = `What's the path and name of the new file?`;
+
+		vscode.window.showInputBox({
+			prompt: question,
+			value: folderPath
+		}).then(selectedFilePath => {
+			console.log(selectedFilePath);
+
+			
+			if (selectedFilePath === null || typeof selectedFilePath === 'undefined') {
+				return;
+			}
+			
+			if (selectedFilePath) {
+				// if (this.settings.showFullPath) {
+				// 	console.log(this.settings.showFullPath);
+				// } else {
+				// 	console.log(selectedFilePath);
+				// }
+				console.log(selectedFilePath);
+			}
+		});
+
+		terminalStack.push(vscode.window.createTerminal(`Ext Terminal #${terminalStack.length + 1}`));
+	}));
+
 	context.subscriptions.push(vscode.commands.registerCommand('terminalTest.createTerminal', () => {
 		terminalStack.push(vscode.window.createTerminal(`Ext Terminal #${terminalStack.length + 1}`));
 	}));
