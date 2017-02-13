@@ -1,9 +1,9 @@
 {
-  "name": "vscode-terminal-api-example",
-  "displayName": "vscode-terminal-api-example",
-  "description": "abc",
+  "name": "vscode-ruff",
+  "displayName": "vscode-ruff",
+  "description": "the extension for ruff developers",
   "version": "0.0.1",
-  "publisher": "Tyriar",
+  "publisher": "wfnuser",
   "engines": {
     "vscode": "^1.5.0"
   },
@@ -11,11 +11,8 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:terminalTest.createTerminal",
-    "onCommand:terminalTest.createAndSend",
-    "onCommand:terminalTest.createZshLoginShell",
-    "onCommand:terminalTest.rapLog",
-    "onCommand:terminalTest.rapDeploy",
+    "onCommand:ruff.rapLog",
+    "onCommand:ruff.rapDeploy",
     "onCommand:ruff.rapInit"
   ],
   "main": "./out/src/extension",
@@ -38,51 +35,11 @@
     },
     "commands": [
       {
-        "command": "terminalTest.createTerminal",
-        "title": "Terminal API: Create Terminal"
-      },
-      {
-        "command": "terminalTest.hide",
-        "title": "Terminal API: Hide"
-      },
-      {
-        "command": "terminalTest.show",
-        "title": "Terminal API: Show"
-      },
-      {
-        "command": "terminalTest.showPreserveFocus",
-        "title": "Terminal API: Show (preserving focus)"
-      },
-      {
-        "command": "terminalTest.sendText",
-        "title": "Terminal API: Send Text"
-      },
-      {
-        "command": "terminalTest.sendTextNoNewLine",
-        "title": "Terminal API: Send Text (no implied \\n)"
-      },
-      {
-        "command": "terminalTest.dispose",
-        "title": "Terminal API: Dispose"
-      },
-      {
-        "command": "terminalTest.createAndSend",
-        "title": "Terminal API: Create Terminal and Immediately Send"
-      },
-      {
-        "command": "terminalTest.createZshLoginShell",
-        "title": "Terminal API: Create Terminal (zsh login shell) [v1.6+]"
-      },
-      {
-        "command": "terminalTest.processId",
-        "title": "Terminal API: Write process ID to console [v1.6+]"
-      },
-      {
-        "command": "terminalTest.rapDeploy",
+        "command": "ruff.rapDeploy",
         "title": "Ruff API: Deploy Code"
       },
       {
-        "command": "terminalTest.rapLog",
+        "command": "ruff.rapLog",
         "title": "Ruff API: Get Ruff Log"
       },
       {
@@ -104,7 +61,7 @@
     "menus": {
       "editor/title": [
         {
-          "when": "resourceLangId == markdown",
+          "when": "resourceLangId == js",
           "command": "ruff.rapInit",
           "group": "navigation"
         }
