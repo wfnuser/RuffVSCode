@@ -17,10 +17,10 @@ export function activate(context: vscode.ExtensionContext) {
 	  defaultProjectName: config.get('defaultProjectName')
     };
 
-	// to restore the project path
+	// to store the project path as global variable
 	let ruffPath = "";
 
-	// set guide question 
+	// set initialize guide question 
 	let questionProjectPath = `What's the path of the project?`;
 	let questionProjectName = `What's the name of the project?`;
 
@@ -43,22 +43,51 @@ export function activate(context: vscode.ExtensionContext) {
 				return;
 			}
 			
+			//set ruff Path
 			ruffPath = selectedProjectPath; 
 			
 			vscode.window.showInputBox({
 				prompt: questionProjectName,
 				value: that.settings.defaultProjectName
 			}).then(projectName => {
+
 				if(projectName === null || typeof projectName === 'undefined') {
 					return;
 				}
+
 				ruffPath = ruffPath + "/" + projectName;
-				child_process.exec("mkdir -p "+ruffPath, function(error,stdout,stderr){
-					child_process.exec("cd "+ruffPath+" && rap init -y", function(error,stdout,stderr){
-						let uri = vscode.Uri.parse(ruffPath);
-						vscode.commands.executeCommand('vscode.openFolder', uri);
+
+				new Promise((resolve, reject) => {
+					child_process.exec(`mkdir -p ${ruffPath}`, function(error,stdout,stderr){
+						if (error) {
+							reject(error);
+						} else {
+							resolve(stdout.trim());
+						}
 					});
-				})
+				}).then(value => {
+					return new Promise((resolve, reject) => {
+						child_process.exec(`cd ${ruffPath} && rap init -y`, function(error,stdout,stderr){
+							if (error) {
+								reject(error);
+							} else {
+								resolve(stdout.trim());
+							}
+						});
+					});
+				}).then(value => {
+					let uri = vscode.Uri.parse(ruffPath);
+					let fileName = `${ruffPath}/src/index.js`;
+
+					vscode.commands.executeCommand('vscode.openFolder', uri).then(function (result) {
+						vscode.window.showInformationMessage('Init Complete!');
+					}).then(function () {
+						return vscode.workspace.openTextDocument(`${ruffPath}/src/index.js`);
+					}).then(doc => {
+						console.log(doc);
+					});
+
+				});
 			})
 
 		});
@@ -71,6 +100,7 @@ export function activate(context: vscode.ExtensionContext) {
 		if (!!ruffPath) {
 			child_process.exec("cd " + ruffPath + " && rap deploy -s 192.168.31.199", function(error,stdout,stderr){
 				console.log("deploy success");
+				vscode.window.showInformationMessage('Deploy Complete');
 			});
 		}
 	}));
@@ -86,3 +116,5 @@ export function activate(context: vscode.ExtensionContext) {
 		return terminalStack[terminalStack.length - 1];
 	}
 }
+
+
