@@ -20,6 +20,9 @@ export function activate(context: vscode.ExtensionContext) {
 	// to store all terminals
 	let terminalStack: vscode.Terminal[] = []; 
 
+	// loading bar
+	let loadingBar = new LoadingBar();
+
 	// get ruff default settings
 	let config = vscode.workspace.getConfiguration('ruff');
 	let that = this;
@@ -67,6 +70,8 @@ export function activate(context: vscode.ExtensionContext) {
 
 				ruffPath = ruffPath + "/" + projectName;
 
+				loadingBar.load();
+
 				new Promise((resolve, reject) => {
 					child_process.exec(`mkdir -p ${ruffPath}`, function(error,stdout,stderr){
 						if (error) {
@@ -86,6 +91,7 @@ export function activate(context: vscode.ExtensionContext) {
 				}).then(value => {
 					let uri = vscode.Uri.parse(ruffPath);
 					vscode.commands.executeCommand('vscode.openFolder', uri);
+					loadingBar.loaded();
 					// todo : can't open the particular file in this folder
 					// let fileName = `${ruffPath}/src/index.js`;
 					// console.log(fileName,"adfa");
@@ -131,6 +137,32 @@ export function activate(context: vscode.ExtensionContext) {
 	function getLatestTerminal() {
 		return terminalStack[terminalStack.length - 1];
 	}
+}
+
+class LoadingBar {
+	private _statusBarItem: vscode.StatusBarItem;
+
+	public load() {
+		console.log("loading");
+	    if (!this._statusBarItem) {
+            this._statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
+        }
+		this._statusBarItem.text = "loading";
+		this._statusBarItem.show();
+	}
+
+	public loaded() {
+	    if (!this._statusBarItem) {
+            this._statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
+			this._statusBarItem.text = "";
+        }
+		this._statusBarItem.hide();
+	}
+
+
+	dispose() {
+        this._statusBarItem.dispose();
+    }
 }
 
 
