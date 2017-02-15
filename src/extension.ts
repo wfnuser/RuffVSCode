@@ -5,6 +5,17 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as child_process from 'child_process'; 
 
+function invokePromise(func, ...args) {
+    return new Promise((resolve, reject) => {
+        let callback = args[args.length - 1];
+        args[args.length - 1] = function (...args) {
+            args = [resolve, reject, ...args];
+            callback.apply(undefined, args);
+        };
+        func.apply(undefined, args);
+    });
+}
+
 export function activate(context: vscode.ExtensionContext) {
 	// to store all terminals
 	let terminalStack: vscode.Terminal[] = []; 
@@ -38,7 +49,6 @@ export function activate(context: vscode.ExtensionContext) {
 			prompt: questionProjectPath,
 			value: defaultPath
 		}).then(selectedProjectPath => {
-
 			if (selectedProjectPath === null || typeof selectedProjectPath === 'undefined') {
 				return;
 			}
@@ -66,27 +76,33 @@ export function activate(context: vscode.ExtensionContext) {
 						}
 					});
 				}).then(value => {
-					return new Promise((resolve, reject) => {
-						child_process.exec(`cd ${ruffPath} && rap init -y`, function(error,stdout,stderr){
-							if (error) {
-								reject(error);
-							} else {
-								resolve(stdout.trim());
-							}
-						});
-					});
+					return invokePromise(child_process.exec, `cd ${ruffPath} && rap init -y`, (resolve, reject, error, stdout, stderr) => {
+						if (error) {
+							reject(error);
+						} else {
+							resolve(stdout.trim());
+						}
+					})
 				}).then(value => {
 					let uri = vscode.Uri.parse(ruffPath);
-					let fileName = `${ruffPath}/src/index.js`;
-
-					vscode.commands.executeCommand('vscode.openFolder', uri).then(function (result) {
-						vscode.window.showInformationMessage('Init Complete!');
-					}).then(function () {
-						return vscode.workspace.openTextDocument(`${ruffPath}/src/index.js`);
-					}).then(doc => {
-						console.log(doc);
-					});
-
+					vscode.commands.executeCommand('vscode.openFolder', uri);
+					// todo : can't open the particular file in this folder
+					// let fileName = `${ruffPath}/src/index.js`;
+					// console.log(fileName,"adfa");
+					// vscode.workspace.openTextDocument(fileName).then(doc => {
+					// 	console.log(doc);
+					// 	if (!doc) {
+					// 		return Promise.reject(new Error('Could not open file!'));
+					// 	}
+					// 	console.log("here");
+					// 	vscode.window.showTextDocument(doc).then((editor) => {
+					// 		console.log(editor);
+					// 		if (!editor) {
+					// 			Promise.reject(new Error('Could not show document!'));
+					// 			return;
+					// 		}
+					// 	});
+					// });
 				});
 			})
 
