@@ -109,6 +109,8 @@ export function activate(context: vscode.ExtensionContext) {
 					// 		}
 					// 	});
 					// });
+				}).catch(error => {
+					loadingBar.loaded();
 				});
 			})
 
@@ -143,11 +145,15 @@ class LoadingBar {
 	private _statusBarItem: vscode.StatusBarItem;
 
 	public load() {
-		console.log("loading");
-	    if (!this._statusBarItem) {
+		let showText = "loading...";
+		let pos = 0;
+		if (!this._statusBarItem) {
             this._statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
         }
-		this._statusBarItem.text = "loading";
+		setInterval( () => {
+			this._statusBarItem.text = showText.slice(0,7+pos);
+			pos = (pos + 1) % 4;
+		},300);
 		this._statusBarItem.show();
 	}
 
