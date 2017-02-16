@@ -1,124 +1,85 @@
 {
-	"name": "vscode-terminal-api-example",
-	"displayName": "vscode-terminal-api-example",
-	"description": "abc",
-	"version": "0.0.1",
-	"publisher": "Tyriar",
-	"engines": {
-		"vscode": "^1.5.0"
-	},
-	"categories": [
-		"Other"
-	],
-	"activationEvents": [
-		"onCommand:terminalTest.createTerminal",
-		"onCommand:terminalTest.createAndSend",
-		"onCommand:terminalTest.createZshLoginShell",
-		"onCommand:terminalTest.rapLog",
-		"onCommand:terminalTest.rapDeploy",
-		"onCommand:ruff.rapInit"
-	],
-	"main": "./out/src/extension",
-	"contributes": {
-		"configuration": {
-            "title": "Ruff Extension Configuration",
-            "type": "object",
-            "properties": {
-                "ruff.rootDirectory": {
-                    "type": "string",
-                    "default": "~",
-                    "description": "root directory"
-                },
-				"ruff.defaultProjectName": {
-                    "type": "string",
-                    "default": "NewRuffProject",
-                    "description": "projectname"
-                }
-            }
+  "name": "vscode-ruff",
+  "displayName": "vscode-ruff",
+  "description": "the extension for ruff developers",
+  "version": "0.0.1",
+  "publisher": "wfnuser",
+  "engines": {
+    "vscode": "^1.5.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:ruff.rapLog",
+    "onCommand:ruff.rapDeploy",
+    "onCommand:ruff.rapInit"
+  ],
+  "main": "./out/src/extension",
+  "contributes": {
+    "configuration": {
+      "title": "Ruff Extension Configuration",
+      "type": "object",
+      "properties": {
+        "ruff.rootDirectory": {
+          "type": "string",
+          "default": "~",
+          "description": "root directory"
         },
-		"commands": [
-			{
-				"command": "terminalTest.createTerminal",
-				"title": "Terminal API: Create Terminal"
-			},
-			{
-				"command": "terminalTest.hide",
-				"title": "Terminal API: Hide"
-			},
-			{
-				"command": "terminalTest.show",
-				"title": "Terminal API: Show"
-			},
-			{
-				"command": "terminalTest.showPreserveFocus",
-				"title": "Terminal API: Show (preserving focus)"
-			},
-			{
-				"command": "terminalTest.sendText",
-				"title": "Terminal API: Send Text"
-			},
-			{
-				"command": "terminalTest.sendTextNoNewLine",
-				"title": "Terminal API: Send Text (no implied \\n)"
-			},
-			{
-				"command": "terminalTest.dispose",
-				"title": "Terminal API: Dispose"
-			},
-			{
-				"command": "terminalTest.createAndSend",
-				"title": "Terminal API: Create Terminal and Immediately Send"
-			},
-			{
-				"command": "terminalTest.createZshLoginShell",
-				"title": "Terminal API: Create Terminal (zsh login shell) [v1.6+]"
-			},
-			{
-				"command": "terminalTest.processId",
-				"title": "Terminal API: Write process ID to console [v1.6+]"
-			},
-			{
-				"command": "terminalTest.rapDeploy",
-				"title": "Ruff API: Deploy Code"
-			},
-			{
-				"command": "terminalTest.rapLog",
-				"title": "Ruff API: Get Ruff Log"
-			},
-			{
-                "command": "ruff.rapInit",
-                "title": "Ruff API: Initialize a project",
-				"icon": {
-					"light": "../img/run.svg",
-					"dark": "../img/run.svg"
-				}
-            }
-		],
-		"keybindings": [
-            {
-                "command": "ruff.rapInit",
-                "key": "alt+ctrl+n",
-                "mac": "alt+cmd+`"
-            }
-        ],
-        "menus": {
-            "editor/title": [
-                {
-					"when": "resourceLangId == markdown",
-                    "command": "ruff.rapInit",
-					"group": "navigation"
-                }
-            ]
+        "ruff.defaultProjectName": {
+          "type": "string",
+          "default": "NewRuffProject",
+          "description": "projectname"
         }
-	},
-	"scripts": {
-		"vscode:prepublish": "tsc -p ./",
-		"compile": "tsc -watch -p ./",
-		"postinstall": "node ./node_modules/vscode/bin/install"
-	},
-	"devDependencies": {
-		"typescript": "^2.1.4",
-		"vscode": "^1.0.0",
-		"@types/node": "*"
-	}
+      }
+    },
+    "commands": [
+      {
+        "command": "ruff.rapDeploy",
+        "title": "Ruff API: Deploy Code"
+      },
+      {
+        "command": "ruff.rapLog",
+        "title": "Ruff API: Get Ruff Log"
+      },
+      {
+        "command": "ruff.rapInit",
+        "title": "Ruff API: Initialize a project",
+        "icon": {
+          "light": "../img/run.svg",
+          "dark": "../img/run.svg"
+        }
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "ruff.rapInit",
+        "key": "alt+ctrl+n",
+        "mac": "alt+cmd+`"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "when": "resourceLangId == js",
+          "command": "ruff.rapInit",
+          "group": "navigation"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "tsc -p ./",
+    "compile": "tsc -watch -p ./",
+    "postinstall": "node ./node_modules/vscode/bin/install"
+  },
+  "devDependencies": {
+    "typescript": "^2.1.4",
+    "vscode": "^1.0.0",
+    "@types/node": "*"
+  },
+  "dependencies": {
+    "child_process": "^1.0.2",
+    "q": "^1.4.1"
+  }
 }
