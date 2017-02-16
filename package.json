@@ -13,7 +13,8 @@
   "activationEvents": [
     "onCommand:ruff.rapLog",
     "onCommand:ruff.rapDeploy",
-    "onCommand:ruff.rapInit"
+    "onCommand:ruff.rapInit",
+    "onLanguage:javascript"
   ],
   "main": "./out/src/extension",
   "contributes": {

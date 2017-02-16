@@ -1,6 +1,7 @@
 'use strict';
 
 import * as vscode from 'vscode';
+import RuffItemProvider from './ruff.ruffItemProvider';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as child_process from 'child_process'; 
@@ -109,6 +110,8 @@ export function activate(context: vscode.ExtensionContext) {
 					// 		}
 					// 	});
 					// });
+				}).catch(error => {
+					loadingBar.loaded();
 				});
 			})
 
@@ -134,6 +137,24 @@ export function activate(context: vscode.ExtensionContext) {
 		getLatestTerminal().show();
 	}));
 
+	// syntax
+	let provider = new RuffItemProvider(path.join(__dirname, '../../data/completion.json'));
+	console.log(path.join(__dirname, '../data/completion.json'));
+	provider.init().then((result) =>
+    {
+        if (!result.success)
+        {
+            console.log(`CompletionItemProvider init failed: ${(result.error.message)}`);
+            vscode.window.showErrorMessage('Something went wrong. Please see the console!');
+        }   
+        else
+        {
+            console.log(`CompletionItemProvider successfully loaded ${provider.count} items from '${provider.filepath}'.`);
+            vscode.window.showInformationMessage('Ready!');
+            context.subscriptions.push(vscode.languages.registerCompletionItemProvider(<vscode.DocumentFilter>{language: 'javascript'}, provider, '#'));
+        }
+    });
+
 	function getLatestTerminal() {
 		return terminalStack[terminalStack.length - 1];
 	}
@@ -141,13 +162,18 @@ export function activate(context: vscode.ExtensionContext) {
 
 class LoadingBar {
 	private _statusBarItem: vscode.StatusBarItem;
+	private _interval: NodeJS.Timer;
 
 	public load() {
-		console.log("loading");
-	    if (!this._statusBarItem) {
+		let showText = "loading...";
+		let pos = 0;
+		if (!this._statusBarItem) {
             this._statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
         }
-		this._statusBarItem.text = "loading";
+		this._interval = setInterval( () => {
+			this._statusBarItem.text = showText.slice(0,7+pos);
+			pos = (pos + 1) % 4;
+		},300);
 		this._statusBarItem.show();
 	}
 
@@ -156,6 +182,7 @@ class LoadingBar {
             this._statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
 			this._statusBarItem.text = "";
         }
+		clearInterval(this._interval)
 		this._statusBarItem.hide();
 	}
 
