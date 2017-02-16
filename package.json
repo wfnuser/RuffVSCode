@@ -45,11 +45,7 @@
       },
       {
         "command": "ruff.rapInit",
-        "title": "Ruff API: Initialize a project",
-        "icon": {
-          "light": "../img/run.svg",
-          "dark": "../img/run.svg"
-        }
+        "title": "Ruff API: Initialize a project"
       }
     ],
     "keybindings": [
@@ -58,16 +54,7 @@
         "key": "alt+ctrl+n",
         "mac": "alt+cmd+`"
       }
-    ],
-    "menus": {
-      "editor/title": [
-        {
-          "when": "resourceLangId == js",
-          "command": "ruff.rapInit",
-          "group": "navigation"
-        }
-      ]
-    }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "tsc -p ./",
